@@ -7,51 +7,111 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="topbar">
-      <h1>Drone Gate Ops Dashboard</h1>
-      <div class="status-pill" id="runStatus">IDLE</div>
-    </header>
-
-    <main class="layout">
-      <section class="panel panel-map">
-        <h2>Course Map</h2>
-        <canvas id="courseCanvas" width="900" height="420"></canvas>
-      </section>
-
-      <section class="panel panel-telemetry">
-        <h2>Telemetry</h2>
-        <div class="stats">
-          <div class="stat"><span>Phase</span><strong id="phase">idle</strong></div>
-          <div class="stat"><span>Gate</span><strong id="gate">0 / 6</strong></div>
-          <div class="stat"><span>Speed</span><strong id="speed">0.00 m/s</strong></div>
-          <div class="stat"><span>Altitude</span><strong id="altitude">0.00 m</strong></div>
-          <div class="stat"><span>Yaw</span><strong id="yaw">0.0°</strong></div>
-          <div class="stat"><span>FPS</span><strong id="fps">0</strong></div>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Autonomous Navigation</p>
+          <h1>Drone Gate Operations Dashboard</h1>
         </div>
-      </section>
-
-      <section class="panel panel-events">
-        <h2>Event Timeline</h2>
-        <ul id="events"></ul>
-      </section>
-
-      <section class="panel panel-controls">
-        <h2>Mission Control</h2>
-        <div class="controls">
-          <button id="startBtn">Start</button>
-          <button id="pauseBtn" disabled>Pause</button>
-          <button id="resetBtn">Reset</button>
-          <label class="preset">
-            Preset
-            <select id="presetSelect">
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="noisy">Noisy</option>
-            </select>
-          </label>
+        <div class="status-group">
+          <div class="status-pill" id="runStatus">IDLE</div>
+          <div class="status-sub" id="missionClock">00:00</div>
         </div>
+      </header>
+
+      <section class="kpi-grid">
+        <article class="kpi-card">
+          <span class="kpi-label">Phase</span>
+          <strong class="kpi-value" id="phase">idle</strong>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">Gate Progress</span>
+          <strong class="kpi-value" id="gate">0 / 6</strong>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">Speed</span>
+          <strong class="kpi-value" id="speed">0.00 m/s</strong>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">Altitude</span>
+          <strong class="kpi-value" id="altitude">0.00 m</strong>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">Yaw</span>
+          <strong class="kpi-value" id="yaw">0.0°</strong>
+        </article>
+        <article class="kpi-card">
+          <span class="kpi-label">Render FPS</span>
+          <strong class="kpi-value" id="fps">0</strong>
+        </article>
       </section>
-    </main>
+
+      <main class="layout">
+        <section class="panel panel-map">
+          <div class="panel-head">
+            <h2>Course Map</h2>
+            <span class="panel-hint">Top-down track state</span>
+          </div>
+          <div class="legend-row">
+            <span><i class="legend-swatch planned"></i>Fastest planned path</span>
+            <span><i class="legend-swatch actual"></i>Simulator chosen path</span>
+          </div>
+          <canvas id="courseCanvas" width="900" height="420"></canvas>
+        </section>
+
+        <section class="panel panel-3d">
+          <div class="panel-head">
+            <h2>3D Flight View</h2>
+            <span class="panel-hint">Drag rotate · Shift+drag pan · Wheel zoom</span>
+          </div>
+          <canvas id="flightCanvas" width="640" height="360"></canvas>
+        </section>
+
+        <section class="panel panel-events">
+          <div class="panel-head">
+            <h2>Event Timeline</h2>
+            <span class="panel-hint">Recent mission activity</span>
+          </div>
+          <ul id="events"></ul>
+        </section>
+
+        <section class="panel panel-controls">
+          <div class="panel-head">
+            <h2>Mission Control</h2>
+            <span class="panel-hint">Run and scenario options</span>
+          </div>
+          <div class="controls">
+            <button id="startBtn">Start Mission</button>
+            <button id="pauseBtn" disabled>Pause</button>
+            <button id="resetBtn">Reset</button>
+            <label class="preset">
+              Preset
+              <select id="presetSelect">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="noisy">Noisy</option>
+              </select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel panel-thinking">
+          <div class="panel-head">
+            <h2>Simulation Thinking</h2>
+            <span class="panel-hint">Planner and controller rationale</span>
+          </div>
+          <div class="thinking-grid">
+            <div><span>Target Gate</span><strong id="thinkTarget">G1</strong></div>
+            <div><span>Distance Error</span><strong id="thinkDistance">0.00 m</strong></div>
+            <div><span>Heading Error</span><strong id="thinkHeading">0.0°</strong></div>
+            <div><span>Pitch Command</span><strong id="thinkPitch">0.0°</strong></div>
+            <div><span>Yaw Command</span><strong id="thinkYawCmd">0.0°</strong></div>
+            <div><span>Risk Score</span><strong id="thinkRisk">0.00</strong></div>
+          </div>
+          <p class="thinking-note" id="thinkNote">Awaiting mission start.</p>
+        </section>
+      </main>
+    </div>
 
     <script type="module" src="./main.js"></script>
   </body>
