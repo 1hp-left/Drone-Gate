@@ -4,7 +4,7 @@ const state = {
   running: false,
   t: 0,
   gateIndex: 0,
-  gatesTotal: 6,
+  gatesTotal: 3,
   speed: 0,
   altitude: 0,
   yawDeg: 0,
@@ -21,6 +21,7 @@ const state = {
   lastFrameTs: performance.now(),
   frameCount: 0,
   preset: "easy",
+  levelMode: "normal",
   thinking: {
     distanceError: 0,
     headingErrorDeg: 0,
@@ -63,6 +64,8 @@ const els = {
   pauseBtn: document.getElementById("pauseBtn"),
   resetBtn: document.getElementById("resetBtn"),
   preset: document.getElementById("presetSelect"),
+  levelMode: document.getElementById("levelModeSelect"),
+  generateLevelBtn: document.getElementById("generateLevelBtn"),
   mapCanvas: document.getElementById("courseCanvas"),
   flightCanvas: document.getElementById("flightCanvas"),
   thinkTarget: document.getElementById("thinkTarget"),
@@ -77,16 +80,46 @@ const els = {
 const mapCtx = els.mapCanvas.getContext("2d");
 const viewCtx = els.flightCanvas.getContext("2d");
 
-const gates = [
-  { x: 120, y: 130 },
-  { x: 220, y: 250 },
-  { x: 360, y: 110 },
-  { x: 500, y: 300 },
-  { x: 660, y: 160 },
-  { x: 790, y: 260 },
+const normalGates = [
+  { x: 220, y: 120 },
+  { x: 460, y: 300 },
+  { x: 730, y: 185 },
 ];
 
+let gates = normalGates.map((gate) => ({ ...gate }));
+
 const startPoint = { x: 70, y: 210 };
+
+function setGates(nextGates) {
+  gates = nextGates.map((gate) => ({ ...gate }));
+  state.gatesTotal = gates.length;
+}
+
+function generateProceduralGates() {
+  const gateCount = Math.floor(Math.random() * 4) + 4;
+  const generated = [];
+  const minGap = 90;
+
+  for (let index = 0; index < gateCount; index += 1) {
+    let candidate;
+    let attempts = 0;
+    do {
+      const laneProgress = (index + 1) / (gateCount + 1);
+      candidate = {
+        x: 130 + laneProgress * (els.mapCanvas.width - 250) + (Math.random() - 0.5) * 40,
+        y: 70 + Math.random() * (els.mapCanvas.height - 140),
+      };
+      attempts += 1;
+    } while (
+      generated.some((existing) => Math.hypot(existing.x - candidate.x, existing.y - candidate.y) < minGap)
+      && attempts < 80
+    );
+
+    generated.push(candidate);
+  }
+
+  return generated;
+}
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -186,6 +219,9 @@ function resetMission() {
   state.phase = "idle";
   state.missionStartTs = 0;
   state.elapsedSeconds = 0;
+  if (state.levelMode === "normal") {
+    setGates(normalGates);
+  }
   state.path = [{ ...startPoint }];
   state.plannedPath = buildPlannedPath();
   state.thinking = {
@@ -197,7 +233,7 @@ function resetMission() {
     note: "Awaiting mission start.",
   };
   setRunning(false);
-  addEvent("Mission reset");
+  addEvent(`Mission reset (${state.levelMode})`);
   render();
 }
 
@@ -208,7 +244,7 @@ function startMission() {
   }
   state.phase = "takeoff";
   setRunning(true);
-  addEvent(`Mission started (${state.preset})`);
+  addEvent(`Mission started (${state.preset}, ${state.levelMode})`);
 }
 
 function updateThinking(target, distanceError, headingError, yawCmd, pitchCmd, riskScore) {
@@ -326,7 +362,7 @@ function renderTelemetry() {
   els.missionClock.textContent = formatTime(state.elapsedSeconds);
 
   const activeTarget = Math.min(state.gateIndex + 1, gates.length);
-  els.thinkTarget.textContent = `G${activeTarget}`;
+  els.thinkTarget.textContent = gates.length > 0 ? `G${activeTarget}` : "—";
   els.thinkDistance.textContent = `${state.thinking.distanceError.toFixed(2)} m`;
   els.thinkHeading.textContent = `${state.thinking.headingErrorDeg.toFixed(1)}°`;
   els.thinkPitch.textContent = `${state.thinking.pitchCommandDeg.toFixed(1)}°`;
@@ -752,6 +788,28 @@ els.resetBtn.addEventListener("click", resetMission);
 els.preset.addEventListener("change", (event) => {
   state.preset = event.target.value;
   addEvent(`Preset switched to ${state.preset}`);
+});
+
+els.levelMode.addEventListener("change", (event) => {
+  state.levelMode = event.target.value;
+
+  if (state.levelMode === "normal") {
+    setGates(normalGates);
+    addEvent("Level mode switched to normal (3 gates)");
+  } else {
+    setGates(generateProceduralGates());
+    addEvent(`Procedural level generated (${state.gatesTotal} gates)`);
+  }
+
+  resetMission();
+});
+
+els.generateLevelBtn.addEventListener("click", () => {
+  state.levelMode = "procedural";
+  els.levelMode.value = "procedural";
+  setGates(generateProceduralGates());
+  addEvent(`Procedural level generated (${state.gatesTotal} gates)`);
+  resetMission();
 });
 
 bind3DInteractions();

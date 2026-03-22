@@ -26,7 +26,7 @@
         </article>
         <article class="kpi-card">
           <span class="kpi-label">Gate Progress</span>
-          <strong class="kpi-value" id="gate">0 / 6</strong>
+          <strong class="kpi-value" id="gate">0 / 3</strong>
         </article>
         <article class="kpi-card">
           <span class="kpi-label">Speed</span>
@@ -92,6 +92,14 @@
                 <option value="noisy">Noisy</option>
               </select>
             </label>
+            <label class="preset">
+              Level
+              <select id="levelModeSelect">
+                <option value="normal">Normal (3 gates)</option>
+                <option value="procedural">Procedural</option>
+              </select>
+            </label>
+            <button id="generateLevelBtn">Generate Level</button>
           </div>
         </section>
 
