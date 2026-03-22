@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drone Gate Ops Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>Drone Gate Ops Dashboard</h1>
+      <div class="status-pill" id="runStatus">IDLE</div>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel-map">
+        <h2>Course Map</h2>
+        <canvas id="courseCanvas" width="900" height="420"></canvas>
+      </section>
+
+      <section class="panel panel-telemetry">
+        <h2>Telemetry</h2>
+        <div class="stats">
+          <div class="stat"><span>Phase</span><strong id="phase">idle</strong></div>
+          <div class="stat"><span>Gate</span><strong id="gate">0 / 6</strong></div>
+          <div class="stat"><span>Speed</span><strong id="speed">0.00 m/s</strong></div>
+          <div class="stat"><span>Altitude</span><strong id="altitude">0.00 m</strong></div>
+          <div class="stat"><span>Yaw</span><strong id="yaw">0.0°</strong></div>
+          <div class="stat"><span>FPS</span><strong id="fps">0</strong></div>
+        </div>
+      </section>
+
+      <section class="panel panel-events">
+        <h2>Event Timeline</h2>
+        <ul id="events"></ul>
+      </section>
+
+      <section class="panel panel-controls">
+        <h2>Mission Control</h2>
+        <div class="controls">
+          <button id="startBtn">Start</button>
+          <button id="pauseBtn" disabled>Pause</button>
+          <button id="resetBtn">Reset</button>
+          <label class="preset">
+            Preset
+            <select id="presetSelect">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="noisy">Noisy</option>
+            </select>
+          </label>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
