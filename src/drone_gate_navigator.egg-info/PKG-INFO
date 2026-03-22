@@ -1,0 +1,158 @@
+Metadata-Version: 2.4
+Name: drone-gate-navigator
+Version: 0.1.0
+Summary: Simulation-first autonomous drone gate navigation MVP
+Author: Drone Autonomy Team
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.25
+Requires-Dist: opencv-python-headless>=4.9
+Requires-Dist: PyYAML>=6.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+Requires-Dist: pytest-cov>=5.0; extra == "dev"
+Provides-Extra: viz
+Requires-Dist: matplotlib>=3.8; extra == "viz"
+
+# Autonomous Drone Gate Navigator
+
+Simulation-first, modular drone autonomy project for navigating racing gates. This repository provides a production-minded MVP that can detect a gate from camera input, estimate pose, generate a trajectory through the gate centerline, and control a simulated drone through at least one gate.
+
+## Architecture Proposal
+
+Core modules:
+
+- `src/perception`: Gate detection and tracking abstraction (classical CV baseline + pluggable backend interface).
+- `src/estimation`: Gate pose (PnP), temporal pose filtering, and state-estimation abstraction.
+- `src/planning`: Local trajectory generation under velocity/acceleration/yaw constraints.
+- `src/control`: Trajectory-following control (PID baseline).
+- `src/mission`: Mission manager and gate sequence state machine.
+- `src/sim`: Internal simulator and sensor model (camera + optional IMU/mock data) for simulation-first development.
+- `src/common`: Shared dataclasses, math, config, and logging/telemetry utilities.
+- `tests`: Unit and integration tests.
+- `scripts`: Demos and benchmark runs.
+- `configs`: Scenario and controller/perception/planning settings (`easy`, `medium`, `noisy`).
+- `docs`: Diagrams, roadmap, assumptions, and limitations.
+
+### Data Flow
+
+1. Simulator produces camera frame and optional sensor streams.
+2. Perception detects gate candidates and outputs corners, confidence, and track id.
+3. Pose estimation computes gate pose relative to drone from corners + camera intrinsics.
+4. Mission manager selects active gate and phase.
+5. Planner generates approach-through-exit trajectory.
+6. Controller tracks trajectory and sends acceleration/yaw-rate commands.
+7. Simulator advances dynamics and returns updated state.
+8. Telemetry logs metrics and artifacts.
+
+See [docs/architecture.md](docs/architecture.md) for a detailed diagram.
+
+## MVP Status
+
+Implemented now:
+
+- Single-gate end-to-end mission in internal simulator.
+- Multi-gate mission scaffolding with gate index transitions.
+- AirSim simulator adapter scaffold with backend switch (`sim.backend`).
+- Classical gate detector baseline with detector abstraction.
+- PnP-based pose estimation from known gate geometry.
+- Pose filtering and simple state-estimation abstraction.
+- Constraint-aware local trajectory generation.
+- PID trajectory follower and safety failover hooks.
+- Metrics and benchmark script.
+
+## Quickstart
+
+### 1) Setup
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+pip install -e .[dev]
+```
+
+### 2) Run a demo
+
+```bash
+python scripts/run_demo.py --config configs/easy.yaml
+```
+
+Outputs are written to `artifacts/` (telemetry, summary, optional plots).
+
+### 3) Run tests
+
+```bash
+pytest
+```
+
+### 4) Run benchmark report
+
+```bash
+python scripts/benchmark.py --configs configs/easy.yaml configs/medium.yaml configs/noisy.yaml
+```
+
+### 5) Launch navigation UI
+
+Interactive UI from existing telemetry:
+
+```bash
+python scripts/visualize_navigation.py --telemetry artifacts/easy/telemetry.csv --config configs/easy.yaml
+```
+
+Run an episode first, then visualize:
+
+```bash
+python scripts/visualize_navigation.py --run-config configs/easy.yaml
+```
+
+Headless snapshot mode:
+
+```bash
+python scripts/visualize_navigation.py --run-config configs/easy.yaml --no-gui --snapshot-out artifacts/ui_snapshot.png
+```
+
+## Configurations
+
+- `configs/easy.yaml`: one large gate, low noise.
+- `configs/medium.yaml`: multiple gates with moderate noise.
+- `configs/noisy.yaml`: stronger image and dynamics noise, intermittent occlusion.
+- `configs/airsim_local.yaml`: AirSim backend example for local Multirotor simulation.
+
+## AirSim Adapter (Scaffold)
+
+The mission runner now supports simulator backend selection:
+
+- `sim.backend: internal` (default)
+- `sim.backend: airsim`
+
+To run with AirSim:
+
+1. Start AirSim Multirotor simulation.
+2. Install client package:
+
+```bash
+pip install airsim
+```
+
+3. Run:
+
+```bash
+python scripts/run_demo.py --config configs/airsim_local.yaml
+```
+
+Notes:
+
+- The adapter currently supports scene camera ingestion and acceleration/velocity command modes.
+- Mission lifecycle hooks are implemented: `initialize_mission()` (optional reset + takeoff) and `reset_mission()`.
+- AirSim lifecycle settings are configurable under `sim.airsim` (`reset_on_start`, `auto_takeoff`, `takeoff_altitude_m`, `takeoff_timeout_s`).
+- Optional fallback is available via `sim.allow_backend_fallback: true` to continue with internal simulation when AirSim runtime/client is unavailable.
+- Gate GT corners are not available from AirSim directly, so recall/precision metrics from GT corners are internal-sim only.
+
+## Assumptions and Limitations
+
+- Internal simulator is intentionally lightweight and not physically complete.
+- Gate detector baseline is tuned for synthetic rendering; real-world generalization needs model improvements.
+- State estimator currently prioritizes simulator truth and visual updates; EKF/VIO is future work.
+- Controller is a baseline and may need retuning for aggressive race trajectories.
+
+See [docs/limitations.md](docs/limitations.md) and [docs/roadmap.md](docs/roadmap.md).

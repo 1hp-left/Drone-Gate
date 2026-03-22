@@ -1,0 +1,53 @@
+{
+  "configs/easy.yaml": {
+    "completed": true,
+    "detection_precision": 1.0,
+    "detection_recall": 1.0,
+    "mean_pose_error_m": 6.8818729114162895,
+    "traversal_success_rate": 1.0,
+    "average_tracking_error_m": 1.791328844289307,
+    "mission_completion_time_s": 2.4499999999999993,
+    "abort_count": 0,
+    "crash_count": 0,
+    "traversed_gates": 1,
+    "total_gates": 1,
+    "extra": {
+      "final_phase": "complete"
+    },
+    "output_dir": "artifacts\\easy"
+  },
+  "configs/medium.yaml": {
+    "completed": true,
+    "detection_precision": 1.0,
+    "detection_recall": 1.0,
+    "mean_pose_error_m": 4.659722075821887,
+    "traversal_success_rate": 1.0,
+    "average_tracking_error_m": 1.7566740265399605,
+    "mission_completion_time_s": 6.299999999999986,
+    "abort_count": 0,
+    "crash_count": 0,
+    "traversed_gates": 3,
+    "total_gates": 3,
+    "extra": {
+      "final_phase": "complete"
+    },
+    "output_dir": "artifacts\\medium"
+  },
+  "configs/noisy.yaml": {
+    "completed": false,
+    "detection_precision": 1.0,
+    "detection_recall": 0.926829268292683,
+    "mean_pose_error_m": 4.715664375618078,
+    "traversal_success_rate": 0.0,
+    "average_tracking_error_m": 1.7471032668779778,
+    "mission_completion_time_s": 5.1999999999999895,
+    "abort_count": 1,
+    "crash_count": 0,
+    "traversed_gates": 1,
+    "total_gates": 3,
+    "extra": {
+      "final_phase": "abort"
+    },
+    "output_dir": "artifacts\\noisy"
+  }
+}

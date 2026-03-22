@@ -1,0 +1,15 @@
+{
+  "detection_precision": 1.0,
+  "detection_recall": 1.0,
+  "mean_pose_error_m": 4.659722075821887,
+  "traversal_success_rate": 1.0,
+  "average_tracking_error_m": 1.7566740265399605,
+  "mission_completion_time_s": 6.299999999999986,
+  "abort_count": 0,
+  "crash_count": 0,
+  "traversed_gates": 3,
+  "total_gates": 3,
+  "extra": {
+    "final_phase": "complete"
+  }
+}
