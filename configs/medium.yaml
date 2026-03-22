@@ -1,0 +1,59 @@
+sim:
+  dt_s: 0.05
+  image_size: [640, 480]
+  image_noise_std: 4.0
+  occlusion_prob: 0.05
+  dynamics_noise_std: 0.05
+  camera:
+    fx: 420.0
+    fy: 420.0
+    cx: 320.0
+    cy: 240.0
+  gates:
+    - center_m: [8.0, 0.0, 0.0]
+      width_m: 2.0
+      height_m: 2.0
+      yaw_rad: 0.0
+    - center_m: [14.0, 1.4, 0.0]
+      width_m: 1.8
+      height_m: 1.8
+      yaw_rad: 0.2
+    - center_m: [20.0, -1.2, 0.2]
+      width_m: 1.8
+      height_m: 1.8
+      yaw_rad: -0.2
+
+mission:
+  min_detection_confidence: 0.32
+  max_lost_steps: 26
+  max_retries: 2
+  gate_reached_distance_m: 0.9
+  gate_exit_distance_m: 1.4
+
+planning:
+  approach_distance_m: 2.2
+  exit_distance_m: 1.6
+  max_velocity_mps: 3.2
+  max_accel_mps2: 3.2
+  max_yaw_rate_rps: 1.2
+  horizon_s: 4.2
+  num_points: 38
+
+control:
+  kp_pos: 1.7
+  kd_vel: 1.1
+  ki_pos: 0.0
+  kp_yaw: 1.5
+  max_accel_mps2: 4.2
+  max_yaw_rate_rps: 1.4
+
+perception:
+  backend: classical
+
+estimation:
+  pose_filter_alpha: 0.45
+
+runtime:
+  max_steps: 700
+  replan_every_steps: 3
+  output_dir: artifacts/medium

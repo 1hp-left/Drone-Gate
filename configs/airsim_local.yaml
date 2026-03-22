@@ -1,0 +1,65 @@
+sim:
+  backend: airsim
+  allow_backend_fallback: true
+  dt_s: 0.05
+  image_size: [640, 480]
+  camera:
+    fx: 420.0
+    fy: 420.0
+    cx: 320.0
+    cy: 240.0
+  gates:
+    - center_m: [8.0, 0.0, 0.0]
+      width_m: 2.0
+      height_m: 2.0
+      yaw_rad: 0.0
+    - center_m: [14.0, 1.2, 0.0]
+      width_m: 1.8
+      height_m: 1.8
+      yaw_rad: 0.2
+  airsim:
+    host: 127.0.0.1
+    port: 41451
+    vehicle_name: ""
+    camera_name: "0"
+    image_type: Scene
+    control_mode: acceleration
+    reset_on_start: true
+    auto_takeoff: true
+    takeoff_altitude_m: 1.2
+    takeoff_timeout_s: 10.0
+
+mission:
+  min_detection_confidence: 0.30
+  max_lost_steps: 35
+  max_retries: 2
+  gate_reached_distance_m: 0.9
+  gate_exit_distance_m: 1.3
+
+planning:
+  approach_distance_m: 2.0
+  exit_distance_m: 1.5
+  max_velocity_mps: 3.0
+  max_accel_mps2: 3.0
+  max_yaw_rate_rps: 1.2
+  horizon_s: 4.0
+  num_points: 35
+
+control:
+  kp_pos: 1.8
+  kd_vel: 1.2
+  ki_pos: 0.0
+  kp_yaw: 1.6
+  max_accel_mps2: 4.0
+  max_yaw_rate_rps: 1.5
+
+perception:
+  backend: classical
+
+estimation:
+  pose_filter_alpha: 0.45
+
+runtime:
+  max_steps: 900
+  replan_every_steps: 3
+  output_dir: artifacts/airsim_local

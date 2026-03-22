@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drone Gate Navigation Control Station</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="top-bar card">
+        <div>
+          <h1>Autonomous Drone Gate-Navigation Control Station</h1>
+          <p>Real-time mission operations dashboard</p>
+        </div>
+        <div class="header-badges">
+          <span class="badge">Simulation</span>
+          <span class="badge">Autonomy Stack</span>
+          <span class="badge">Ops View</span>
+        </div>
+      </header>
+
+      <section id="control-bar" class="card control-bar"></section>
+      <section id="warning-banner" class="warning-banner" style="display: none"></section>
+
+      <main class="dashboard-grid">
+        <section class="card panel map-panel">
+          <div class="panel-title">Main Navigation View (Top-Down)</div>
+          <canvas id="course-map-canvas"></canvas>
+          <div class="panel-caption">
+            Drone heading, gate states, planned trajectory, actual path, and target highlighting.
+          </div>
+        </section>
+
+        <section class="right-stack">
+          <section class="card panel perspective-panel">
+            <div class="panel-title">Perspective View</div>
+            <canvas id="perspective-canvas"></canvas>
+          </section>
+
+          <section class="card panel mission-panel">
+            <div class="panel-title">Mission Status</div>
+            <div id="mission-card"></div>
+          </section>
+
+          <section class="card panel health-panel">
+            <div class="panel-title">System Health & Confidence</div>
+            <div id="health-grid"></div>
+          </section>
+        </section>
+
+        <section class="card panel telemetry-panel">
+          <div class="panel-title">Live Telemetry</div>
+          <div id="telemetry-panel"></div>
+          <div class="trend-grid">
+            <div>
+              <div class="trend-title">Speed Trend</div>
+              <canvas id="speed-trend-canvas" class="trend-canvas"></canvas>
+            </div>
+            <div>
+              <div class="trend-title">Confidence Trend</div>
+              <canvas id="confidence-trend-canvas" class="trend-canvas"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section class="card panel event-panel">
+          <div class="panel-title">Event / Decision Log</div>
+          <div id="event-log" class="event-log"></div>
+        </section>
+      </main>
+    </div>
+
+    <div id="gate-tooltip" class="gate-tooltip"></div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
